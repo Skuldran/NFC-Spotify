@@ -12,13 +12,13 @@ import time
 
 class NFCInterface:
     
-    oldTag, oldTagArrival, askedForNewTag
+    #oldTag, oldTagArrival, askedForNewTag
     
     def __init__(self):
         try:
-            pn532 = PN532_UART(debug=False, reset=20)
+            self.pn532 = PN532_UART(debug=False, reset=20)
             
-            pn532.SAM_configuration()
+            self.pn532.SAM_configuration()
             
             
             self.oldTagArrival = time.perf_counter()
@@ -26,11 +26,9 @@ class NFCInterface:
             print('PN532 is initialized')
         except Exception as e:
             print(e)
-        finally:
-            GPIO.cleanup()
         
     def update(self):
-        uid = pn532.read_passive_target(timeout=0.5)
+        uid = self.pn532.read_passive_target(timeout=0.5)
         if uid is None:
             return {"newTag": None,
                      "tagAge": None,
@@ -38,14 +36,16 @@ class NFCInterface:
         
         print('Found card with UID:', [hex(i) for i in uid])
         
-        newTAg= (uid != self.oldTag)
+        newTag = (uid != self.oldTag)
         if newTag:
             self.oldTag = uid
             self.oldTagArrival = time.perf_counter()
             
-        
+        tagAge = time.perf_counter()-self.oldTagArrival
+
+        print('The card has been here: ', tagAge)
         return {"newTag": newTag,
-                "tagAge": self.oldTAgArrival - time.perf_counter(),
+                "tagAge": tagAge,
                 "uid": uid}
     
         

@@ -10,6 +10,7 @@ import random
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 class SpotifyInterface:
     
@@ -53,11 +54,15 @@ class SpotifyInterface:
             
         #Set up spotify communication
         scopes = 'user-read-currently-playing,user-read-playback-state,user-modify-playback-state'
-        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scopes))
+        
+        auth_manager = SpotifyClientCredentials()
+        self.sp = spotipy.Spotify(auth_manager=auth_manager)
+	#self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scopes))
     
     def reactToCard(self, nfc_id):
-        if ~nfc_id in self.states:
+        if ~(nfc_id in self.states):
             print("ID haas not been saved");
+            return
             #raise Exception('ID does not exist!')
         
         
@@ -88,7 +93,7 @@ class SpotifyInterface:
         contDict = curr_play['context']
         context = contDict['uri']
         shuffle = curr_play['shuffle_state']
-        
+        print("Got whats currently playing.")        
         #Create and save new state
         newState = {
             "id": ID,
@@ -99,6 +104,7 @@ class SpotifyInterface:
         
         with open('data.json', 'w') as fp:
             json.dump(self.states, fp)
+        print("Saved to json")
         
     def getSuitableDevice():
         print('')

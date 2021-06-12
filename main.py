@@ -8,7 +8,7 @@ Created on Sat Jun 12 14:42:55 2021
 import SpotifyInterface
 import NFCInterface
 
-programTime = 10;
+programTime = 5;
 
 si = SpotifyInterface.SpotifyInterface();
 nfc = NFCInterface.NFCInterface();
@@ -29,6 +29,7 @@ while(True):
         si.reactToCard(tagStatus["uid"])
         
     if tagStatus["tagAge"]>programTime & ~tagIsProgrammed:
+        print("Attempt to program card.")
         si.saveCard(tagStatus["uid"])
         tagIsProgrammed = True
         print("Tag is programmed!")
