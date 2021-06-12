@@ -13,6 +13,8 @@ from spotipy.oauth2 import SpotifyOAuth
 
 class SpotifyInterface:
     
+    currently_playing = None
+    
     def __init__(self):
         #Look for user data
         if os.path.isfile('userdata.json'):
@@ -55,7 +57,10 @@ class SpotifyInterface:
     
     def reactToCard(self, nfc_id):
         if ~nfc_id in self.states:
-            raise Exception('ID does not exist!')
+            print("ID haas not been saved");
+            #raise Exception('ID does not exist!')
+        
+        
         
         state = self.states[nfc_id];
         
@@ -63,13 +68,17 @@ class SpotifyInterface:
         context = state['context']
         shuffle = state['shuffle']
         
+        if self.currently_playing == context:
+            print("Already playing this state.")
+        
+        self.currently_playing = context
         self.sp.shuffle(state=shuffle)
         self.sp.start_playback(context_uri=context)
         
-    def saveCard(self):
-        newID = random.randint(1, 10000);
+    def saveCard(self, ID):
+        #newID = random.randint(1, 10000);
         
-        newID = 100;
+        #newID = 100;
         # Gather data from Spotipy playback
         # - Context
         # - Current track?
@@ -82,16 +91,14 @@ class SpotifyInterface:
         
         #Create and save new state
         newState = {
-            "id": newID,
+            "id": ID,
             "context": context,
             "shuffle": shuffle}
         
-        self.states[newID] = newState;
+        self.states[ID] = newState;
         
         with open('data.json', 'w') as fp:
             json.dump(self.states, fp)
-        
-        return newID
         
     def getSuitableDevice():
         print('')
