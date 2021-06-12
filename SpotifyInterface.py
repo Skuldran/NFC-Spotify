@@ -49,23 +49,20 @@ class SpotifyInterface:
         if os.path.isfile('data.json'):
             with open('data.json', 'r') as fp:
                 self.states = json.load(fp)
+            
+            print(self.states)
         else:
             self.states = {}
             
         #Set up spotify communication
         scopes = 'user-read-currently-playing,user-read-playback-state,user-modify-playback-state'
         
-        auth_manager = SpotifyClientCredentials()
-        self.sp = spotipy.Spotify(auth_manager=auth_manager)
-	#self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scopes))
+        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scopes))
     
     def reactToCard(self, nfc_id):
-        if ~(nfc_id in self.states):
-            print("ID haas not been saved");
+        if not nfc_id in self.states:
+            print("ID haas not been saved: ", nfc_id);
             return
-            #raise Exception('ID does not exist!')
-        
-        
         
         state = self.states[nfc_id];
         
@@ -81,9 +78,6 @@ class SpotifyInterface:
         self.sp.start_playback(context_uri=context)
         
     def saveCard(self, ID):
-        #newID = random.randint(1, 10000);
-        
-        #newID = 100;
         # Gather data from Spotipy playback
         # - Context
         # - Current track?
@@ -104,7 +98,8 @@ class SpotifyInterface:
         
         with open('data.json', 'w') as fp:
             json.dump(self.states, fp)
-        print("Saved to json")
+        print("Saved to json: ", ID)
+        print(self.states)
         
     def getSuitableDevice():
         print('')

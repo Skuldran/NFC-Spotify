@@ -30,14 +30,22 @@ class NFCInterface:
     def update(self):
         uid = self.pn532.read_passive_target(timeout=0.5)
         if uid is None:
+            if self.oldTag != None:
+                print('Lost the previous card.')
+            self.oldTag = None
             return {"newTag": None,
                      "tagAge": None,
                      "uid": None}
         
-        print('Found card with UID:', [hex(i) for i in uid])
         
+        #uid = [hex(i) for i in uid]
+        #uid = uid.decode('ascii')
+        #uid = str(bytes(uid))
+        #uid = long(uid)
+        uid = str(int.from_bytes(uid, byteorder='big'))
         newTag = (uid != self.oldTag)
         if newTag:
+            print('Found card with UID:', uid)
             self.oldTag = uid
             self.oldTagArrival = time.perf_counter()
             
