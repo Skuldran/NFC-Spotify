@@ -2,21 +2,26 @@ from smbus2 import SMBus
 
 class ArduinoInterface:
 
-    adress = 69 #nice
+    address = 69 #nice
 
     def __init__(self):
         self.bus = SMBus(1)
 
     def setColor(self, col):
         
-        switch(col) {
-            case 'red': bytes = [255, 0, 0]; break;
-            case 'green': bytes = [0, 255, 0]; break;
-            case 'blue': bytes = [0, 0, 255]; break;
-        }
+        if col == 'red':
+            vals = [255, 0, 0]
+        elif col == 'green':
+            vals = [0, 255, 0]
+        elif col=='blue':
+            vals = [0, 0, 255]
+        elif col=='yellow':
+            vals = [220, 220, 60]
+        else:
+            vals = [50, 50, 50]
         
-        bus.write_i2c_block_data(adress, 0, bytes);
+        self.bus.write_i2c_block_data(self.address, 0, vals);
             
         
     def buttonPressed(self):
-         return (bus.read_byte_data(adress, 0) == 1);
+         return (self.bus.read_byte_data(self.address, 0) == 1);
