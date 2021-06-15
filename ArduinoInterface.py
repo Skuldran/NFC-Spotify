@@ -1,4 +1,5 @@
 from smbus2 import SMBus
+import time
 
 class ArduinoInterface:
 
@@ -6,22 +7,24 @@ class ArduinoInterface:
 
     def __init__(self):
         self.bus = SMBus(1)
+        time.sleep(1)
+        print("Arduino communication initialized.")
 
     def setColor(self, col):
-        
         if col == 'red':
-            vals = [255, 0, 0]
+            vals = [0xFF, 0x00, 0x00]
         elif col == 'green':
-            vals = [0, 255, 0]
+            vals = [0x00, 0xFF, 0x00]
         elif col=='blue':
-            vals = [0, 0, 255]
+            vals = [0x00, 0x00, 0xFF]
         elif col=='yellow':
-            vals = [220, 220, 60]
+            vals = [0xA0, 0x50, 0x10]
         else:
-            vals = [50, 50, 50]
+            vals = [0x80, 0x80, 0x80]
         
-        self.bus.write_i2c_block_data(self.address, 0, vals);
-            
+        self.bus.write_i2c_block_data(self.address, 0x00, vals);
         
     def buttonPressed(self):
-         return (self.bus.read_byte_data(self.address, 0) == 1);
+        time.sleep(0.1);
+        button = self.bus.read_byte(self.address);
+        return (button == 1);

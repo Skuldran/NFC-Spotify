@@ -49,8 +49,7 @@ class SpotifyInterface:
         if os.path.isfile('data.json'):
             with open('data.json', 'r') as fp:
                 self.states = json.load(fp)
-            
-            print(self.states)
+
         else:
             self.states = {}
             
@@ -99,7 +98,7 @@ class SpotifyInterface:
         with open('data.json', 'w') as fp:
             json.dump(self.states, fp)
         print("Saved to json: ", ID)
-        print(self.states)
+        #print(self.states)
         
     def getSuitableDevice():
         print('')

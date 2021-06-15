@@ -8,23 +8,27 @@ Created on Sat Jun 12 14:42:55 2021
 import SpotifyInterface
 import NFCInterface
 import ArduinoInterface
+import time
 
 si = SpotifyInterface.SpotifyInterface();
 nfc = NFCInterface.NFCInterface();
-ai = ArduinoInterface();
+ai = ArduinoInterface.ArduinoInterface();
 
 tagIsProgrammed = False
 programmingState = False;
 
 ai.setColor('green')
 
+time.sleep(0.1)
 while(True):
     if ai.buttonPressed():
         programmingState = ~programmingState
         if programmingState:
+            print("Device set to programming state.")
             ai.setColor('yellow')
             tagIsProgrammed = False
         else:
+            print("Device set to play state.")
             ai.setColor('green')
     
     tagStatus = nfc.update();
@@ -41,6 +45,7 @@ while(True):
             ai.setColor('blue')
             si.saveCard(tagStatus["uid"])
             tagIsProgrammed = True
+            programmingState = False
             ai.setColor('green')
         else:
             print("Playing spotify according to new tag.")
